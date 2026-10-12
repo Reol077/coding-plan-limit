@@ -14,6 +14,7 @@ const PROVIDER_META = {
   zhipu:          { name: '智谱 GLM',      color: '#3f7cff', icon: 'icons/m-zai.svg', homepage: 'https://bigmodel.cn/coding-plan/personal/usage' },
   'kimi-coding':  { name: 'Kimi Coding',   color: '#16c8b7', icon: 'icons/kimi-color.png', homepage: 'https://www.kimi.com/code/console' },
   volcengine:     { name: '火山方舟',      color: '#006EFF', icon: 'icons/volcengine-color.png', homepage: 'https://console.volcengine.com/ark/region:ark+cn-beijing/openManagement?advancedActiveKey=subscribe' },
+  'aliyun-tp':    { name: '千问 Token Plan', color: '#615ced', icon: 'icons/qwen-color.svg', homepage: 'https://bailian.console.aliyun.com/cn-beijing/subscription/overview' },
   'claude-official': { name: 'Claude',     color: '#d97757', icon: 'icons/claude-color.svg', homepage: 'https://claude.ai' },
   codex:          { name: 'OpenAI',        color: '#10a37f', icon: 'icons/m-openai.svg', homepage: 'https://chatgpt.com' },
   grok:           { name: 'Grok',          color: '#000000', icon: 'icons/m-grok.svg', homepage: 'https://x.ai/grok' },
@@ -222,14 +223,22 @@ function rowHtml(view, opts = {}) {
       }
       if (q.amount <= view.plan.threshold) { urgent = true; rightCls = 'urgent'; }
     } else if (q.kind === 'fixed_quota') {
-      urgent = isUrgent(q.used_percent);
+      urgent = isUrgent(q.used_percent) || 100 - q.used_percent <= (view.plan.threshold ?? 0);
       const d = window.__showRemaining ? 100 - q.used_percent : q.used_percent;
+      const reset = q.reset_at ? resetAtText(q.reset_at) : '';
+      const usage = q.total ? `${fmtNum(q.used)} / ${fmtNum(q.total)} ${q.unit || ''}`.trim() : '';
       lines = `
         <div class="win-line ${isUrgent(q.used_percent) ? 'urgent' : ''}">
           <span>总额度</span>
           <div class="bar slim ${isUrgent(q.used_percent) ? 'urgent-fill' : ''}"><i data-w="${d.toFixed(1)}"></i></div>
           <b>${d.toFixed(0)}%</b>
-        </div>`;
+          ${reset ? `<em>${esc(reset)}</em>` : ''}
+        </div>` +
+        (usage ? `
+        <div class="win-line">
+          <span>用量</span>
+          <em style="flex:1;text-align:left">${esc(usage)}</em>
+        </div>` : '');
     }
   }
   if (urgent) rightCls = 'urgent';

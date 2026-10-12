@@ -66,7 +66,7 @@
 | 自定义外观 | 主题（系统/浅色/深色）、主题色（**预设含纯黑 + 拾色器 + #RRGGBB + 饱和度/对比度滑杆**，实时预览，弹窗跟随）、Logo 三态（原色/Mark/自定义图片，托盘+标题栏+侧边同步） |
 | 数据本地 | 配置 `config.json`（损坏自动备份并拒绝写入）、密钥系统凭据库、快照 `snapshots.json` |
 
-## 内置模板（14 个）
+## 内置模板（16 个）
 
 | 模板 | 数据内容 | 认证方式 |
 |---|---|---|
@@ -74,6 +74,7 @@
 | 智谱 GLM Coding Plan | 5小时 / 7天 / 本月 / MCP（unit 缺失自动兜底分类） | API Key |
 | Kimi For Coding | 5小时窗口 + 7天限额（重置时刻） | API Key |
 | 火山方舟 Coding Plan | 5小时 / 7天 / 30天窗口（自动识别 Coding / Agent Plan） | 火山 IAM AccessKey |
+| 千问 Token Plan | 百炼/千问AI平台订阅 Credits 用量 / 剩余（含 Token Plan 个人版与团队版，Claude Code 经 `/apps/anthropic` 接入的套餐） | 阿里云 AccessKey |
 | **Claude Official** | 官方订阅 5小时 / 7天 / Opus / Sonnet（读本机 `~/.claude/.credentials.json`，需 Claude CLI 已登录） | 无需密钥 |
 | **OpenAI / ChatGPT** | 官方订阅窗口额度（读本机 `~/.codex/auth.json`，需 Codex CLI 已登录）；支持**多账号**（捕获副本 / 托管登录绑定） | 无需密钥 |
 | **xAI Grok** | SuperGrok 订阅窗口额度（读本机 `~/.grok/auth.json`，需 Grok CLI 已登录） | 无需密钥 |
@@ -122,5 +123,6 @@ npm run build    # 构建当前平台安装包
 - macOS / Linux 托盘无系统悬停事件，弹窗为左键点击触发（Windows 悬停正常）
 - macOS 的 Claude 凭据在钥匙串，claude-official 模板目前仅读取文件凭据（Windows/Linux）
 - NewAPI 系币种跟随站点后台显示设置（API 无法自省）
-- 待支持：火山引擎 Coding Plan（AK/SK 签名）、AWS Bedrock（CloudWatch）、xAI Grok 订阅（OAuth/gRPC）
+- 待支持：AWS Bedrock（CloudWatch）
+- 千问 Token Plan 用量查询走阿里云控制面接口，需阿里云 AccessKey（日常调用的 sk-sp- 推理 Key 查不了用量）
 - Claude/Codex 凭据过期会提示重新 login

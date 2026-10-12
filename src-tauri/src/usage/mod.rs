@@ -1,6 +1,7 @@
 //! 套餐查询统一入口：内置模板注册表 + 按模板分发查询。
 //! 移植自 claude-mini-hud src/usage.ts，并对齐 cc-switch 的实现细节。
 
+pub mod aliyun_tp;
 pub mod balances;
 pub mod grok;
 pub mod http;
@@ -71,6 +72,16 @@ pub fn templates() -> Vec<Template> {
             has_region: false,
             needs_base_url: false,
             homepage: "https://console.volcengine.com/ark/region:ark+cn-beijing/openManagement?advancedActiveKey=subscribe".into(),
+        },
+        Template {
+            id: "aliyun-tp".into(),
+            name: "千问 Token Plan".into(),
+            description: "百炼/千问AI平台订阅 Credits 用量（阿里云 AccessKey 签名查询）".into(),
+            auth: "bss".into(),
+            quota_type: "fixed".into(),
+            has_region: true,
+            needs_base_url: true,
+            homepage: "https://bailian.console.aliyun.com/cn-beijing/subscription/overview".into(),
         },
         Template {
             id: "claude-official".into(),
@@ -201,6 +212,15 @@ pub async fn query(plan: &PlanConfig, cred: &Credential) -> Result<Quota, String
         "kimi-coding" => kimi_coding::query(require(cred.bearer.as_deref(), "API Key")?).await,
         "volcengine" => {
             volcengine::query(
+                require(cred.ak_id.as_deref(), "AccessKey ID")?,
+                require(cred.ak_secret.as_deref(), "AccessKey Secret")?,
+            )
+            .await
+        }
+        "aliyun-tp" => {
+            aliyun_tp::query(
+                region,
+                plan.base_url.as_deref(),
                 require(cred.ak_id.as_deref(), "AccessKey ID")?,
                 require(cred.ak_secret.as_deref(), "AccessKey Secret")?,
             )

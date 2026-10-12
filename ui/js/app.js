@@ -157,7 +157,7 @@ function setupDrag(box) {
 // 品牌短名（模板卡与默认套餐名）
 const SHORT_LABEL = {
   minimax: 'MiniMax', zhipu: '智谱GLM', 'kimi-coding': 'Kimi', 'claude-official': 'Claude',
-  codex: 'OpenAI', deepseek: 'DeepSeek',
+  codex: 'OpenAI', deepseek: 'DeepSeek', 'aliyun-tp': '千问TP',
   kimi: 'Kimi', stepfun: '阶跃', siliconflow: '硅基流动',
   newapi: 'NewAPI', sub2api: 'Sub2API',
 };
@@ -212,11 +212,15 @@ function renderFormFields() {
   $('f-ak-secret-item').hidden = t.auth !== 'bss';
   $('ak-hint').textContent = t.id === 'volcengine'
     ? '火山引擎账号 AccessKey（IAM 密钥，非方舟推理 API Key），获取：控制台右上角头像 → 访问控制 → API 访问密钥'
-    : '阿里云主账号 RAM 密钥（非 DashScope API Key）';
+    : t.id === 'aliyun-tp'
+      ? '阿里云账号 AccessKey（RAM 子账号即可，非 sk-sp- 推理 Key），获取：RAM 访问控制台 → 用户 → AccessKey'
+      : '阿里云主账号 RAM 密钥（非 DashScope API Key）';
   $('f-baseurl-item').hidden = !t.needs_base_url;
   $('f-baseurl-hint').textContent = t.id === 'zhipu'
     ? '按站点区域自动填充；如需自定义可手动修改'
-    : '必填，例如 https://your-newapi-site.com';
+    : t.id === 'aliyun-tp'
+      ? '用量查询域名，按站点区域自动填充，一般无需修改'
+      : '必填，例如 https://your-newapi-site.com';
   // Codex 多账号区块（仅 codex 模板；新建套餐须先保存拿到 plan_id 才能绑定）
   const isCodex = t.id === 'codex';
   $('f-codex-item').hidden = !isCodex;
@@ -390,6 +394,7 @@ $('seg-kimi-variant').addEventListener('click', (e) => {
 // 模板有明确区域站点的默认 API 地址：选择区域即自动填充，输入框仍可自定义覆盖
 const REGION_BASE_URLS = {
   zhipu: { cn: 'https://open.bigmodel.cn/api', intl: 'https://api.z.ai/api' },
+  'aliyun-tp': { cn: 'https://modelstudio.cn-beijing.aliyuncs.com', intl: 'https://modelstudio.ap-southeast-1.aliyuncs.com' },
 };
 
 function regionBaseUrl(tplId, region) {
