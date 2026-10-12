@@ -180,6 +180,9 @@ pub struct Settings {
     /// 密钥存储后端：keychain（系统凭据库，默认）| file（本地加密文件，无钥匙串弹窗）
     #[serde(default = "default_secret_backend")]
     pub secret_backend: String,
+    /// 额度显示口径：false（默认）= 已用百分比 | true = 剩余百分比
+    #[serde(default)]
+    pub show_remaining: bool,
 }
 
 fn default_logo_style() -> String {
@@ -232,6 +235,7 @@ impl Default for Settings {
             bar_style: default_bar_style(),
             logo_style: default_logo_style(),
             secret_backend: default_secret_backend(),
+            show_remaining: false,
             auto_check_update: true,
         }
     }

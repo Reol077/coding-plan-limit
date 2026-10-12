@@ -8,8 +8,8 @@ use crate::state::AppState;
 use crate::usage::http;
 
 const RELEASES_API: &str =
-    "https://api.github.com/repos/zander-zyx/coding-plan-limit/releases/latest";
-const RELEASES_PAGE: &str = "https://github.com/zander-zyx/coding-plan-limit/releases";
+    "https://api.github.com/repos/Reol077/coding-plan-limit/releases/latest";
+const RELEASES_PAGE: &str = "https://github.com/Reol077/coding-plan-limit/releases";
 const AUTO_CHECK_INTERVAL: std::time::Duration = std::time::Duration::from_secs(24 * 3600);
 
 #[derive(Serialize, Clone)]

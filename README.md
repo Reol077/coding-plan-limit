@@ -21,7 +21,7 @@
 
 ## 下载安装（免打包）
 
-打开 [Releases 页面](https://github.com/zander-zyx/coding-plan-limit/releases) 下载对应平台安装包：
+打开 [Releases 页面](https://github.com/Reol077/coding-plan-limit/releases) 下载对应平台安装包：
 
 | 系统 | 怎么选 | 文件 |
 |---|---|---|

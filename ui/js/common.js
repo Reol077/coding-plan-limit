@@ -78,6 +78,7 @@ function applySettingsLook(s) {
     document.documentElement.style.setProperty('--brand-light', '55%');
   }
   window.__barStyle = s.bar_style === 'ring' ? 'ring' : 'bar';
+  window.__showRemaining = !!s.show_remaining;
 }
 
 async function initTheme() {
@@ -198,11 +199,13 @@ function rowHtml(view, opts = {}) {
         const urgentLine = isUrgent(u) || (100 - u <= (view.plan.threshold ?? 0)) ? 'urgent' : '';
         // 用尽且有明确重置时刻 → 遮罩倒计时（金额行/无重置时刻不参与）
         const cd = w.reset_at && u >= 100 ? countdownText(w.reset_at) : '';
+        // 展示口径可切已用/剩余；紧急判定与遮罩始终按已用算
+        const d = window.__showRemaining ? 100 - u : u;
         return `
         <div class="win-line ${urgentLine}${cd ? ' resetting' : ''}"${cd ? ` data-reset-at="${w.reset_at}" data-countdown="${cd}"` : ''}>
           <span>${esc(w.label)}</span>
-          <div class="bar slim ${urgentLine ? 'urgent-fill' : ''}"><i data-w="${u.toFixed(1)}"></i></div>
-          <b data-count="${u}" data-fmt="${u < 10 ? 'pct1' : 'pct0'}">${u.toFixed(u < 10 ? 1 : 0)}%</b>
+          <div class="bar slim ${urgentLine ? 'urgent-fill' : ''}"><i data-w="${d.toFixed(1)}"></i></div>
+          <b data-count="${d}" data-fmt="${d < 10 ? 'pct1' : 'pct0'}">${d.toFixed(d < 10 ? 1 : 0)}%</b>
           ${reset ? `<em>${esc(reset)}</em>` : ''}
         </div>`;
       }).join('');
@@ -220,12 +223,12 @@ function rowHtml(view, opts = {}) {
       if (q.amount <= view.plan.threshold) { urgent = true; rightCls = 'urgent'; }
     } else if (q.kind === 'fixed_quota') {
       urgent = isUrgent(q.used_percent);
-      const u = q.used_percent;
+      const d = window.__showRemaining ? 100 - q.used_percent : q.used_percent;
       lines = `
-        <div class="win-line ${isUrgent(u) ? 'urgent' : ''}">
+        <div class="win-line ${isUrgent(q.used_percent) ? 'urgent' : ''}">
           <span>总额度</span>
-          <div class="bar slim ${isUrgent(u) ? 'urgent-fill' : ''}"><i data-w="${u.toFixed(1)}"></i></div>
-          <b>${u.toFixed(0)}%</b>
+          <div class="bar slim ${isUrgent(q.used_percent) ? 'urgent-fill' : ''}"><i data-w="${d.toFixed(1)}"></i></div>
+          <b>${d.toFixed(0)}%</b>
         </div>`;
     }
   }

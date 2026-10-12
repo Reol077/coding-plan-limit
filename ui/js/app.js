@@ -474,6 +474,9 @@ function renderSettings() {
   $('seg-theme').querySelectorAll('button').forEach((b) =>
     b.classList.toggle('active', b.dataset.v === (s.theme || 'system')));
 
+  $('seg-quota-display').querySelectorAll('button').forEach((b) =>
+    b.classList.toggle('active', (b.dataset.v === 'remaining') === !!s.show_remaining));
+
   $('seg-secret-backend').querySelectorAll('button').forEach((b) =>
     b.classList.toggle('active', b.dataset.v === (s.secret_backend || 'keychain')));
 
@@ -575,6 +578,14 @@ async function saveSettings(patch) {
 $('seg-theme').addEventListener('click', (e) => {
   const v = e.target.dataset?.v;
   if (v) saveSettings({ theme: v }).then(renderSettings);
+});
+
+// 额度显示口径切换：先翻全局标志再重绘列表（弹窗经 settings-updated 广播自行跟随）
+$('seg-quota-display').addEventListener('click', (e) => {
+  const v = e.target.dataset?.v;
+  if (!v) return;
+  window.__showRemaining = v === 'remaining';
+  saveSettings({ show_remaining: window.__showRemaining }).then(renderPlans);
 });
 
 $('seg-notify').addEventListener('click', (e) => {
@@ -819,7 +830,7 @@ $('btn-check-update').addEventListener('click', async () => {
 });
 
 $('btn-repo').addEventListener('click', () => {
-  invoke('open_external', { url: 'https://github.com/zander-zyx/coding-plan-limit' }).catch(() => {});
+  invoke('open_external', { url: 'https://github.com/Reol077/coding-plan-limit' }).catch(() => {});
 });
 
 // ─── 数据加载与初始化 ─────────────────────────────────────────
